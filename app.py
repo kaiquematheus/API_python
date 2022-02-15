@@ -3,6 +3,7 @@
 from flask import Flask
 from flask_restful import Api
 from resources.hotel import Hoteis, Hotel
+from resources.usuario import User, UserRegister
 
 
 app = Flask(__name__)
@@ -21,6 +22,9 @@ def cria_banco():
 
 api.add_resource(Hoteis, '/hoteis')
 api.add_resource(Hotel, '/hoteis/<string:hotel_id>')
+api.add_resource(User, '/usuarios/<int:user_id>')
+api.add_resource(UserRegister, '/cadastro')
+
 
 
 
