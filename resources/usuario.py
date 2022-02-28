@@ -1,8 +1,10 @@
 from ast import arg
 from flask_restful import Resource, reqparse
 from models.usuarioModel import UserModel
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from werkzeug.security import safe_str_cmp
+#from blacklist import BLACKLIST
+from BLACKLIST import BLACKLIST
 
 
 atributos = reqparse.RequestParser()
@@ -23,6 +25,7 @@ class User(Resource):
         return {'message': 'User not found.'}, 404 # not found
 
     # Metodo Delete
+    @jwt_required()
     def delete(self, user_id):
         user = UserModel.find_user(user_id)
         if user:
@@ -61,5 +64,12 @@ class UserLogin(Resource):
             return {'acces_token': token_de_acesso}, 200
         return{'message': 'The username or password is incorrect'}, 401 # Unauthorize
 
+class UserLogout(Resource):
+    
+    @jwt_required()
+    def post(self):
+        jwt_id = get_jwt()['jti'] # JWT token Identifier
+        BLACKLIST.add(jwt_id)
+        return {'message': 'Logged out successfully!'}, 200
 
 
