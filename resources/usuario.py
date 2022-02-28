@@ -1,6 +1,8 @@
 from ast import arg
 from flask_restful import Resource, reqparse
 from models.usuarioModel import UserModel
+from flask_jwt_extended import create_access_token
+from werkzeug.security import safe_str_cmp
 
 
 atributos = reqparse.RequestParser()
@@ -56,6 +58,8 @@ class UserLogin(Resource):
 
         if user and safe_str_cmp(user.senha, dados['senha']):
             token_de_acesso = create_access_token(identity=user.user_id)
+            return {'acces_token': token_de_acesso}, 200
+        return{'message': 'The username or password is incorrect'}, 401 # Unauthorize
 
 
 

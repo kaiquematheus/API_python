@@ -1,6 +1,7 @@
 from sql_akchemy import banco
 
 
+
 class HotelModel(banco.Model):
     __tablename__ = 'hoteis'
 
