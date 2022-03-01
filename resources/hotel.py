@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required
 import sqlite3
 
 def normalize_path_params(cidade=None, estrelas_min = 0, estrelas_max = 5, diaria_min = 0, diaria_max = 10000, limit = 50, offset = 0, **dados):
+    
     if cidade:
         return {
             'cidade': cidade,
@@ -51,22 +52,22 @@ class Hoteis(Resource):
         parametros = normalize_path_params(**dados_validos)
 
         #Caso o usuário não tenha definido uma cidade
-        if parametros.get('cidade'):
+        if not parametros.get('cidade'):
             consulta = "SELECT * FROM hoteis \
                         WHERE (estrelas >= ? and estrelas <= ?) \
                         and (diaria >= ?  and diaria <= ?) \
-                        LIMIT ? OFFSET ? "
-            tupla = tupla([parametros[chave] for chave in parametros])
-            resultado = cursor.execute(consulta, ())
+                        LIMIT ? OFFSET ?"
+            tupla = tuple([parametros[chave] for chave in parametros])
+            resultado = cursor.execute(consulta, tupla)
         else:
             #Caso o usuário tenha definido uma cidade
             consulta = "SELECT * FROM hoteis \
                         WHERE (cidade = ?) \
                         and (estrelas >= ? and estrelas <= ?) \
                         and (diaria >= ?  and diaria <= ?) \
-                        LIMIT ? OFFSET ? "
-            tupla = tupla([parametros[chave] for chave in parametros])
-            resultado = cursor.execute(consulta, ())
+                        LIMIT ? OFFSET ?"
+            tupla = tuple([parametros[chave] for chave in parametros])
+            resultado = cursor.execute(consulta, tupla)
 
         hoteis = []
         for linha in resultado:
