@@ -1,23 +1,25 @@
 from sql_akchemy import banco
 
-
-
 class HotelModel(banco.Model):
     __tablename__ = 'hoteis'
 
-    hotel_id = banco.Column(banco.String, primary_key=True)
-    nome = banco.Column(banco.String(80))
-    estrelas = banco.Column(banco.Float(precision=1))
-    diaria = banco.Column(banco.Float(precision=2))
-    cidade = banco.Column(banco.String(40))
-    
+    hotel_id = banco.Column(banco.String, primary_key=True) # atributo da classe
+    nome = banco.Column(banco.String(80)) # atributo da classe
+    estrelas = banco.Column(banco.Float(precision=1)) # atributo da classe
+    diaria = banco.Column(banco.Float(precision=2)) # atributo da classe
+    cidade = banco.Column(banco.String(40)) # atributo da classe
+    site_id = banco.Column(banco.Integer, banco.ForeignKey('sites.site_id')) # atributo da classe chave estrangeira da tabela siteModel
+    #site = banco.relationship('SiteModel')
 
-    def __init__(self, hotel_id, nome, estrelas, diaria, cidade) :
+
+     #Construtor
+    def __init__(self, hotel_id, nome, estrelas, diaria, cidade, site_id) :
         self.hotel_id = hotel_id
         self.nome = nome
         self.estrelas = estrelas
         self.diaria = diaria
         self.cidade = cidade
+        self.site_id = site_id
     
     def json(self):
         return {
@@ -25,7 +27,8 @@ class HotelModel(banco.Model):
             'nome': self.nome,
             'estrelas': self.estrelas,
             'diaria': self.diaria,
-            'cidade': self.cidade
+            'cidade': self.cidade,
+            'site_id' : self.site_id
         }
 
     @classmethod
