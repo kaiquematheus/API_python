@@ -9,7 +9,6 @@ class Sites(Resource):
         def get(self):
             return {'sites': [site.json() for site in SiteModel.query.all()]} # Esta consulta retorna uma lista de objetos (sites)
 
-
 class Site(Resource):
     def get(self, url):
         site = SiteModel.find_site(url)
@@ -29,7 +28,7 @@ class Site(Resource):
         return site.json()
 
     def delete(self, url):
-        site = SiteModel(url)
+        site = SiteModel.find_site(url)
         if site:
             site.delete_site()
             return {'message': 'Site deleted'}

@@ -1,6 +1,7 @@
 from ast import arg
 from flask_restful import Resource, reqparse
-from models.hotelModel import HotelModel
+from models.hotelModel import HotelModel 
+from models.siteModel import SiteModel
 from resources.filtros import normalize_path_params, consulta_sem_cidade, consulta_com_cidade
 from flask_jwt_extended import jwt_required
 import sqlite3
@@ -51,7 +52,7 @@ class Hoteis(Resource):
 
         return {'hoteis': hoteis} # SELECT * FROM hoteis
 
-        return {'hoteis': [hotel.json() for hotel in HotelModel.query.all()]} # SELECT * FROM
+        #return {'hoteis': [hotel.json() for hotel in HotelModel.query.all()]} # SELECT * FROM
 
 class Hotel(Resource):
     atributos = reqparse.RequestParser()
@@ -87,14 +88,17 @@ class Hotel(Resource):
         dados = Hotel.atributos.parse_args() 
         # esse código já vai desempacotar todos os dados definindo chave e valor para cada dado.
         # sendo limitado pelos argumentos setados como atributo da classe
-        hotel = HotelModel(hotel_id, **dados)
-        #convertendo o dicionario para json
+        hotel = HotelModel(hotel_id, **dados) #convertendo o dicionario para json
+        
+        #if not SiteModel.find_by_id(dados.get('site_id')):
+        if not SiteModel.find_by_id(dados['site_id']):
+            return {'message': 'The hotel must be associated to a valid site id.'}, 400
         try:
             # salva o hotel no banco de dados.
             hotel.save_hotel()
         except:
             return {'message': 'An internal error ocurred trying to save hotel.'}, 500 # Internal Server Error
-        return hotel.json()
+        return hotel.json(), 201
 
     # Metodo Put
     @jwt_required()

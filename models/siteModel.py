@@ -18,10 +18,19 @@ class SiteModel(banco.Model):
             'hoteis' : [hotel.json() for hotel in self.hoteis ]
         }
 
+
     @classmethod
     def find_site(cls, url):
         #esse cls e a abreviação da classe seria a mesma coisa de escrever SiteModel
         site = cls.query.filter_by(url=url).first() # SELECT * FROM sites WHERE url = $url
+        if site:
+            return site
+        return None
+    
+    @classmethod
+    def find_by_id(cls, site_id):
+        #esse cls e a abreviação da classe seria a mesma coisa de escrever SiteModel
+        site = cls.query.filter_by(site_id=site_id).first() # SELECT * FROM sites WHERE site_id = $site_id
         if site:
             return site
         return None
@@ -35,5 +44,8 @@ class SiteModel(banco.Model):
 
     # Deleta o Site do banco de dados
     def delete_site(self):
+        # Deletando todos os hoteis associados ao site
+        [hotel.delete_hotel() for hotel in self.hoteis]
+        # Deletando o site.
         banco.session.delete(self)
         banco.session.commit()
